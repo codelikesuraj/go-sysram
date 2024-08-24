@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Server Sent Events</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  </head>
+  <body class="h-screen w-screen grid items-center justify-center">
+    <div class="grid">
+      <h1 class="text-lg font-bold text-center m-4">Memory Usage</h1>
+      <div id="line-chart"></div>
+      <ul>
+        <li class="flex justify-between">
+          <div class="font-bold">In use:</div>
+          <div id="in_use"></div>
+        </li>
+        <li class="flex justify-between">
+          <div class="font-bold">Available:</div>
+          <div id="available"></div>
+        </li>
+        <li class="flex justify-between">
+          <div class="font-bold">Total:</div>
+          <div id="total"></div>
+        </li>
+      </ul>
+    </div>
+  </body>
+  <script>
+    let i = 10;
+    let newData = [];
+    const eventSource = new EventSource("events");
+    const chart = new ApexCharts(document.getElementById("line-chart"), {
+      // set this option to enable the tooltip for the chart, learn more here: https://apexcharts.com/docs/tooltip/
+      tooltip: {
+        enabled: true,
+        x: {
+          show: true,
+        },
+        y: {
+          show: true,
+        },
+      },
+      grid: {
+        show: false,
+        strokeDashArray: 4,
+        padding: {
+          left: 2,
+          right: 2,
+          top: -26,
+        },
+      },
+      series: [
+        {
+          data: newData.slice(),
+        },
+      ],
+      noData: {
+        text: "Loading...",
+      },
+      chart: {
+        height: "100%",
+        maxWidth: "100%",
+        type: "area",
+        animations: {
+          enabled: true,
+          easing: "linear",
+          dynamicAnimation: {
+            speed: 1,
+          },
+        },
+        fontFamily: "Inter, sans-serif",
+        dropShadow: {
+          enabled: false,
+        },
+        toolbar: {
+          show: false,
+        },
+      },
+      legend: {
+        show: true,
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      markers: {
+        size: 0,
+      },
+      stroke: {
+        width: 6,
+      },
+      xaxis: {
+        labels: {
+          show: false,
+        },
+        axisBorder: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
+        },
+      },
+    });
+    chart.render();
+
+    const formatToMB = (value) =>
+      parseFloat(value / 1024 / 1024).toFixed(1);
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      const in_use = formatToMB(data.in_use);
+      document.getElementById("total").innerHTML =
+        formatToMB(data.total) + "MB";
+      document.getElementById("in_use").innerHTML =
+        formatToMB(data.in_use) + "MB";
+      document.getElementById("available").innerHTML =
+        formatToMB(data.available) + "MB";
+
+      newData.push({ x: i++, y: Number(in_use) });
+      if (newData.length > 50) {
+        newData.shift();
+      }
+      chart.updateSeries([
+        {
+          data: newData,
+        },
+      ]);
+    };
+  </script>
+</html>
