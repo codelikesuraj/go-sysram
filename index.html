@@ -27,6 +27,38 @@
           <div id="total"></div>
         </li>
       </ul>
+
+      <div
+        class="text-center w-full mt-8 mb-0 mx-auto text-sm"
+      >
+        Made with ❤ by
+        <a
+          href="https://linktr.ee/codelikesuraj?utm_source=linktree_profile_share&ltsid=f778c799-fc05-43e9-9fd0-d6b85cab4a03"
+          target="_blank"
+          class="underline"
+          >Abdulbaki Suraj</a
+        >
+        <div class="text-center space-x-1 mt-1">
+          <a
+            class="underline"
+            href="https://github.com/codelikesuraj"
+            target="_blank"
+            >Github</a
+          >
+          <a
+            class="underline"
+            href="https://linkedin.com/in/abdulbaki-suraj"
+            target="_blank"
+            >LinkedIn</a
+          >
+          <a
+            class="underline"
+            href="https://x.com/fliplikesuraj"
+            target="_blank"
+            >X(Twitter)</a
+          >
+        </div>
+      </div>
     </div>
   </body>
   <script>
@@ -39,8 +71,8 @@
     const chart = new ApexCharts(document.getElementById("line-chart"), {
       tooltip: {
         enabled: true,
-        x: {show: true},
-        y: {show: true},
+        x: { show: true },
+        y: { show: true },
       },
       grid: {
         show: true,
@@ -52,7 +84,10 @@
         },
       },
       series: [
-        {name: "In use"},
+        {
+          name: "In use",
+          data: newData.in_use.slice(),
+        },
       ],
       noData: { text: "Loading..." },
       chart: {
@@ -62,9 +97,9 @@
         animations: {
           enabled: true,
           easing: "easeinout",
-          dynamicAnimation: {speed: 1},
+          dynamicAnimation: { speed: 1 },
         },
-        toolbar: {show: false},
+        toolbar: { show: false },
       },
       dataLabels: {
         enabled: false,
@@ -75,9 +110,9 @@
         curve: "smooth",
       },
       xaxis: {
-        labels: {show: false},
-        axisBorder: {show: false},
-        axisTicks: {show: false},
+        labels: { show: false },
+        axisBorder: { show: false },
+        axisTicks: { show: false },
       },
     });
     chart.render();
@@ -86,9 +121,11 @@
       const data = JSON.parse(event.data);
       const in_use = formatToMB(data.in_use);
 
-      document.getElementById("total").innerHTML = formatToMB(data.total) + "MB";
+      document.getElementById("total").innerHTML =
+        formatToMB(data.total) + "MB";
       document.getElementById("in_use").innerHTML = in_use + "MB";
-      document.getElementById("available").innerHTML = formatToMB(data.available) + "MB";
+      document.getElementById("available").innerHTML =
+        formatToMB(data.available) + "MB";
 
       let t = new Date().toLocaleTimeString();
 
@@ -98,9 +135,7 @@
         newData.in_use.shift();
       }
 
-      chart.updateSeries([
-        {data: newData.in_use},
-      ]);
+      chart.updateSeries([{ data: newData.in_use }]);
     };
   </script>
 </html>
