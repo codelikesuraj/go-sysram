@@ -7,20 +7,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   </head>
-  <body class="h-screen w-screen grid items-center justify-center">
-    <div class="grid">
+  <body class="h-screen flex items-center justify-center">
+    <div class="grid w-screen mx-auto">
       <h1 class="text-lg font-bold text-center m-4">Memory Usage</h1>
-      <div id="line-chart"></div>
-      <ul>
-        <li class="flex justify-between">
+
+      <div class="m-4" id="line-chart"></div>
+
+      <ul class="mx-auto">
+        <li class="flex justify-between space-x-5">
           <div class="font-bold">In use:</div>
           <div id="in_use"></div>
         </li>
-        <li class="flex justify-between">
+        <li class="flex justify-between space-x-5">
           <div class="font-bold">Available:</div>
           <div id="available"></div>
         </li>
-        <li class="flex justify-between">
+        <li class="flex justify-between space-x-5">
           <div class="font-bold">Total:</div>
           <div id="total"></div>
         </li>
@@ -28,22 +30,22 @@
     </div>
   </body>
   <script>
-    let i = 10;
-    let newData = [];
+    let newData = {
+      in_use: [],
+      available: [],
+      total: [],
+    };
+
+    const formatToMB = (value) => parseFloat(value / 1024 / 1024).toFixed(1);
     const eventSource = new EventSource("events");
     const chart = new ApexCharts(document.getElementById("line-chart"), {
-      // set this option to enable the tooltip for the chart, learn more here: https://apexcharts.com/docs/tooltip/
       tooltip: {
         enabled: true,
-        x: {
-          show: true,
-        },
-        y: {
-          show: true,
-        },
+        x: {show: true},
+        y: {show: true},
       },
       grid: {
-        show: false,
+        show: true,
         strokeDashArray: 4,
         padding: {
           left: 2,
@@ -52,82 +54,61 @@
         },
       },
       series: [
-        {
-          data: newData.slice(),
-        },
+        {name: "In use"},
+        {name: "Available"},
       ],
-      noData: {
-        text: "Loading...",
-      },
+      noData: { text: "Loading..." },
       chart: {
+        stacked: true,
         height: "100%",
         maxWidth: "100%",
         type: "area",
         animations: {
           enabled: true,
-          easing: "linear",
-          dynamicAnimation: {
-            speed: 1,
-          },
+          easing: "easeinout",
+          dynamicAnimation: {speed: 1},
         },
-        fontFamily: "Inter, sans-serif",
-        dropShadow: {
-          enabled: false,
-        },
-        toolbar: {
-          show: false,
-        },
-      },
-      legend: {
-        show: true,
+        toolbar: {show: false},
       },
       dataLabels: {
         enabled: false,
-      },
-      markers: {
-        size: 0,
+        type: "timestamp",
       },
       stroke: {
-        width: 6,
+        width: 3,
+        curve: "smooth",
       },
       xaxis: {
-        labels: {
-          show: false,
-        },
-        axisBorder: {
-          show: false,
-        },
-        axisTicks: {
-          show: false,
-        },
+        labels: {show: false},
+        axisBorder: {show: false},
+        axisTicks: {show: false},
       },
-      yaxis: {
-        min: 0,
-      }
+      yaxis: {show: false},
     });
     chart.render();
-
-    const formatToMB = (value) =>
-      parseFloat(value / 1024 / 1024).toFixed(1);
 
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
       const in_use = formatToMB(data.in_use);
-      document.getElementById("total").innerHTML =
-        formatToMB(data.total) + "MB";
-      document.getElementById("in_use").innerHTML =
-        formatToMB(data.in_use) + "MB";
-      document.getElementById("available").innerHTML =
-        formatToMB(data.available) + "MB";
+      const available = formatToMB(data.available);
 
-      newData.push({ x: i++, y: Number(in_use) });
-      if (newData.length > 50) {
-        newData.shift();
+      document.getElementById("total").innerHTML = formatToMB(data.total) + "MB";
+      document.getElementById("in_use").innerHTML = in_use + "MB";
+      document.getElementById("available").innerHTML = available + "MB";
+
+      let t = new Date().toLocaleTimeString();
+
+      newData.in_use.push({ x: t, y: Number(in_use) });
+      newData.available.push({ x: t, y: Number(available) });
+
+      if (newData.in_use.length > 50) {
+        newData.in_use.shift();
+        newData.available.shift();
       }
+
       chart.updateSeries([
-        {
-          data: newData,
-        },
+        {data: newData.in_use},
+        {data: newData.available},
       ]);
     };
   </script>
