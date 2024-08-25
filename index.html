@@ -79,7 +79,6 @@
         axisBorder: {show: false},
         axisTicks: {show: false},
       },
-      yaxis: {show: false},
     });
     chart.render();
 
@@ -95,7 +94,7 @@
 
       newData.in_use.push({ x: t, y: Number(in_use) });
 
-      if (newData.in_use.length > 50) {
+      if (newData.in_use.length > 30) {
         newData.in_use.shift();
       }
 
