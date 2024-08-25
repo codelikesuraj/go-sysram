@@ -32,8 +32,6 @@
   <script>
     let newData = {
       in_use: [],
-      available: [],
-      total: [],
     };
 
     const formatToMB = (value) => parseFloat(value / 1024 / 1024).toFixed(1);
@@ -55,11 +53,9 @@
       },
       series: [
         {name: "In use"},
-        {name: "Available"},
       ],
       noData: { text: "Loading..." },
       chart: {
-        stacked: true,
         height: "100%",
         maxWidth: "100%",
         type: "area",
@@ -90,25 +86,21 @@
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
       const in_use = formatToMB(data.in_use);
-      const available = formatToMB(data.available);
 
       document.getElementById("total").innerHTML = formatToMB(data.total) + "MB";
       document.getElementById("in_use").innerHTML = in_use + "MB";
-      document.getElementById("available").innerHTML = available + "MB";
+      document.getElementById("available").innerHTML = formatToMB(data.available) + "MB";
 
       let t = new Date().toLocaleTimeString();
 
       newData.in_use.push({ x: t, y: Number(in_use) });
-      newData.available.push({ x: t, y: Number(available) });
 
       if (newData.in_use.length > 50) {
         newData.in_use.shift();
-        newData.available.shift();
       }
 
       chart.updateSeries([
         {data: newData.in_use},
-        {data: newData.available},
       ]);
     };
   </script>
