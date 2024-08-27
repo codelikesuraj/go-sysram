@@ -12,12 +12,12 @@ import (
 	"github.com/shirou/gopsutil/v4/mem"
 )
 
-//go:embed index.html
-var index embed.FS
+//go:embed static/*
+var staticFiles embed.FS
 
 func main() {
-	indexFS, _ := fs.Sub(index, ".")
-	http.Handle("/", http.FileServer(http.FS(indexFS)))
+	staticFS, _ := fs.Sub(staticFiles, "static")
+	http.Handle("/", http.FileServer(http.FS(staticFS)))
 	http.HandleFunc("/events", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/event-stream")
 		w.Header().Set("Connection", "keep-alive")
@@ -31,7 +31,7 @@ func main() {
 				"available": m.Available,
 			})
 			fmt.Fprintf(w, "data: %s\n\n", string(data))
-			time.Sleep(1 * time.Second)
+			time.Sleep(1500 * time.Millisecond)
 			w.(http.Flusher).Flush()
 		}
 	})
