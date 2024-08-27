@@ -67,7 +67,7 @@
     };
 
     const formatToMB = (value) => parseFloat(value / 1024 / 1024).toFixed(1);
-    const eventSource = new EventSource("events");
+    const eventSource = new EventSource("/events");
     const chart = new ApexCharts(document.getElementById("line-chart"), {
       tooltip: {
         enabled: true,
@@ -86,17 +86,17 @@
       series: [
         {
           name: "In use",
-          data: newData.in_use.slice(),
+          data: newData.in_use,
         },
       ],
-      noData: { text: "Loading..." },
+      noData: { text: "Loading ..." },
       chart: {
         height: "100%",
         maxWidth: "100%",
         type: "area",
         animations: {
           enabled: true,
-          easing: "easeinout",
+          easing: "linear",
           dynamicAnimation: { speed: 1 },
         },
         toolbar: { show: false },
