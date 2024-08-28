@@ -2,7 +2,9 @@ let newData = {
     in_use: [],
 };
 
-const formatToMB = (value) => parseFloat(value / 1024 / 1024).toFixed(1);
+let isTotalUpdated = false;
+
+const formatToMB = (value) => Number(parseFloat(value / 1024 / 1024).toFixed(1));
 const eventSource = new EventSource("/events");
 const chart = new ApexCharts(document.getElementById("line-chart"), {
     tooltip: {
@@ -52,27 +54,36 @@ const chart = new ApexCharts(document.getElementById("line-chart"), {
         labels: { show: false },
         axisBorder: { show: false },
         axisTicks: { show: false },
-    },
+    }
 });
 chart.render();
 
 eventSource.onmessage = (event) => {
     const data = JSON.parse(event.data);
     const in_use = formatToMB(data.in_use);
+    const total = formatToMB(data.total)
 
-    document.getElementById("total").innerHTML =
-        formatToMB(data.total) + "MB";
+    document.getElementById("total").innerHTML = total + "MB";
     document.getElementById("in_use").innerHTML = in_use + "MB";
     document.getElementById("available").innerHTML =
         formatToMB(data.available) + "MB";
 
     let t = new Date().toLocaleTimeString();
 
-    newData.in_use.push({ x: t, y: Number(in_use) });
+    newData.in_use.push({ x: t, y: in_use });
 
     if (newData.in_use.length > 60) {
         newData.in_use.shift();
     }
 
     chart.updateSeries([{ data: newData.in_use }]);
+    if (!isTotalUpdated) {
+        chart.updateOptions({
+            yaxis: {
+                min: 0,
+                max: total
+            }
+        });
+        isTotalUpdated = true;
+    }
 };
