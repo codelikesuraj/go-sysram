@@ -7,8 +7,10 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/shirou/gopsutil/v4/mem"
 )
 
@@ -16,6 +18,14 @@ import (
 var staticFiles embed.FS
 
 func main() {
+	_ = godotenv.Load()
+
+	port := os.Getenv("PORT_GO_SSE")
+	if port == "" {
+		log.Fatal("PORT_GO_SSE must be set")
+	}
+	addr := fmt.Sprintf("localhost:%s", port)
+
 	staticFS, _ := fs.Sub(staticFiles, "static")
 	http.Handle("/", http.FileServer(http.FS(staticFS)))
 	http.HandleFunc("/events", func(w http.ResponseWriter, r *http.Request) {
@@ -35,5 +45,7 @@ func main() {
 			w.(http.Flusher).Flush()
 		}
 	})
-	log.Fatal(http.ListenAndServe(":8080", nil))
+
+	log.Println("Listening at http://" + addr)
+	log.Fatal(http.ListenAndServe(addr, nil))
 }

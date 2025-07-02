@@ -2,7 +2,10 @@ module sse
 
 go 1.22.3
 
-require github.com/shirou/gopsutil/v4 v4.24.7
+require (
+	github.com/joho/godotenv v1.5.1
+	github.com/shirou/gopsutil/v4 v4.24.7
+)
 
 require (
 	github.com/go-ole/go-ole v1.2.6 // indirect
