@@ -1,0 +1,26 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.22
+
+      - name: Build
+        run: |
+          GOOS=linux GOARCH=amd64 go build -o builds/app ./...
+
+      - name: Upload binary to VPS
+        run: |
+          scp builds/sysram ${{ secretS.VPS_USER }}@${{ secrets.VPS_HOST }}:${{ secrets.VPS_TARGET_DIR }}
