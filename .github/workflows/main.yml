@@ -23,4 +23,4 @@ jobs:
 
       - name: Upload binary to VPS
         run: |
-          scp builds/sysram ${{ secretS.VPS_USER }}@${{ secrets.VPS_HOST }}:${{ secrets.VPS_TARGET_DIR }}
+          scp builds/app ${{ secretS.VPS_USER }}@${{ secrets.VPS_HOST }}:${{ secrets.VPS_TARGET_DIR }}
