@@ -28,6 +28,7 @@ func main() {
 
 	staticFS, _ := fs.Sub(staticFiles, "static")
 	http.Handle("/", http.FileServer(http.FS(staticFS)))
+
 	http.HandleFunc("/events", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/event-stream")
 		w.Header().Set("Connection", "keep-alive")
