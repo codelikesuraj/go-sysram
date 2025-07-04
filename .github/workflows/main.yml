@@ -28,4 +28,4 @@ jobs:
           key: ${{ secrets.KEY }}
           username: ${{ secrets.VPS_USER }}
           source: builds/app
-          target: ${{ secrets.VPS_TARGET_DIR }}
+          target: /home/suraj/apps/testing
