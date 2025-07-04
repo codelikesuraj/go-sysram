@@ -22,4 +22,12 @@ jobs:
           GOOS=linux GOARCH=amd64 go build -o builds/app ./...
 
       - name: Upload binary to VPS
-        run: ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "echo '✅ SSH connection successful!'"
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          key: ${{ secrets.KEY }}
+          username: ${{ secrets.VSP_USER }}
+          script: |
+            echo '✅ SSH connection successful!'
+            whoami
+            ls -al
