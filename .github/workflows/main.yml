@@ -22,11 +22,11 @@ jobs:
           GOOS=linux GOARCH=amd64 go build -o builds/app ./...
 
       - name: Upload binary to VPS
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.VPS_HOST }}
           key: ${{ secrets.KEY }}
-          username: ${{ secrets.VSP_USER }}
+          username: ${{ secrets.VPS_USER }}
           script: |
             echo '✅ SSH connection successful!'
             whoami
