@@ -22,7 +22,7 @@ jobs:
           GOOS=linux GOARCH=amd64 go build -o builds/app ./...
 
       - name: Upload binary to VPS
-        uses: appleboy/scp-action@v1.0/0
+        uses: appleboy/scp-action@v1.0.0
         with:
           host: ${{ secrets.VPS_HOST }}
           key: ${{ secrets.KEY }}
