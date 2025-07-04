@@ -19,7 +19,7 @@ jobs:
 
       - name: Build
         run: |
-          GOOS=linux GOARCH=amd64 go build -o sysram ./...
+          GOOS=linux GOARCH=amd64 go build -o app ./...
 
       - name: Upload binary to VPS
         uses: appleboy/scp-action@v1.0.0
@@ -27,5 +27,5 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           key: ${{ secrets.KEY }}
           username: ${{ secrets.VPS_USER }}
-          source: sysram
-          target: /home/suraj/apps/sysram
+          source: app
+          target: /home/suraj/apps/sysram/
