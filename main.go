@@ -20,9 +20,9 @@ var staticFiles embed.FS
 func main() {
 	_ = godotenv.Load()
 
-	port := os.Getenv("PORT_GO_SSE")
+	port := os.Getenv("PORT_GO_SYSRAM")
 	if port == "" {
-		log.Fatal("PORT_GO_SSE must be set")
+		log.Fatal("PORT_GO_SYSRAM must be set")
 	}
 	addr := fmt.Sprintf("localhost:%s", port)
 
