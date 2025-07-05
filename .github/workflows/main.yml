@@ -1,13 +1,10 @@
 name: Build and Deploy
 
-on:
-  push:
-    branches: [master]
+on: push
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,8 +21,16 @@ jobs:
       - name: Upload binary to VPS
         uses: appleboy/scp-action@v1.0.0
         with:
-          host: ${{ secrets.VPS_HOST }}
+          host: ${{ secrets.HOST }}
           key: ${{ secrets.KEY }}
-          username: ${{ secrets.VPS_USER }}
+          username: ${{ secrets.USER }}
           source: run
-          target: /home/suraj/apps/sysram/
+          target: ${{ secrets.TARGET_DIR }}
+
+      - name: Restart services
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.HOST }}
+          key: ${{ secrets.KEY }}
+          username: ${{ secrets.USER }}
+          script: sudo systemctl restart sysram.service
