@@ -33,4 +33,4 @@ jobs:
           host: ${{ secrets.HOST }}
           key: ${{ secrets.KEY }}
           username: ${{ secrets.USER }}
-          script: sudo systemctl daemon-reload
+          script: sudo systemctl restart sysram.service
